@@ -15,6 +15,7 @@ UNIT_FILES := \
 	SpitInterfaces.vala \
 	TransitionsInterfaces.vala \
 	StandardHostInterface.vala \
+	ToolInterfaces.vala \
 	ManifestWidget.vala \
 	DataImportsInterfaces.vala
 

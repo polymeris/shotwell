@@ -2809,6 +2809,34 @@ public abstract class Photo : PhotoSource, Dateable {
             notify_altered(new Alteration("image", "redeye"));
     }
 
+    public void apply_tool(Spit.Processing.Tool tool, float? val = 1.0f)
+    {
+        const string key = "tools";
+        string id = tool.get_id();
+
+        KeyValueMap map = get_transformation(key);
+        if (map == null)
+            map = new KeyValueMap(key);
+            
+        map.set_float(id, val);
+        set_transformation(map);
+    }
+
+    public Spit.Processing.Process[] get_tool_processes()
+    {
+        const string key = "tools";
+        Spit.Processing.Process[] ret = new Spit.Processing.Process[0];
+        KeyValueMap map = get_transformation(key);
+        foreach (Spit.Pluggable p in Plugins.get_pluggables_for_type(typeof(Spit.Processing.Tool)))
+            if (map.has_key(p.get_id())) {
+                Spit.Processing.Tool t = p as Spit.Processing.Tool;
+                Spit.Processing.Process process = t.create_process();
+                process.set_parameter_value(map.get_float(p.get_id(), 1.0f));
+                ret += process;
+            }
+        return ret;
+    }
+
     // Pixbuf generation
     
     // Returns dimensions for the pixbuf at various stages of the pipeline.
@@ -3235,7 +3263,11 @@ public abstract class Photo : PhotoSource, Dateable {
 #if MEASURE_PIPELINE
             adjustment_time = timer.elapsed();
 #endif
-        }        
+        }
+
+        // Postprocessing
+        foreach (Spit.Processing.Process tp in get_tool_processes())
+            pixbuf = tp.execute(pixbuf);
 
         // This is to verify the generated pixbuf matches the scale requirements; crop, straighten 
         // and orientation are all transformations that change the dimensions or aspect ratio of 

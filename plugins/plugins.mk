@@ -2,7 +2,8 @@
 PLUGINS := \
 	shotwell-transitions \
 	shotwell-publishing \
-	shotwell-data-imports
+	shotwell-data-imports \
+	test-processing
 
 PLUGINS_RC := \
 	plugins/shotwell-publishing/facebook.png \
