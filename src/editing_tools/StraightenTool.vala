@@ -230,7 +230,6 @@ public class StraightenTool : EditingTool {
 
     private bool on_slider_released(Gdk.EventButton e) {
         high_qual_repaint();
-
         return false;
     }
 
@@ -497,7 +496,6 @@ public class StraightenTool : EditingTool {
         canvas.get_default_ctx().rectangle(0, 0, view_width, view_height);
         canvas.get_default_ctx().fill();
         canvas.get_default_ctx().paint();
-
         // reset the 'modelview' matrix, since when the canvas is not in
         // 'tool' mode, it 'expects' things to be set up a certain way.
         canvas.get_default_ctx().identity_matrix();

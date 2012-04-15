@@ -2174,6 +2174,8 @@ public class AdjustTool : EditingTool {
         public Gtk.Button cancel_button = new Gtk.Button.from_stock(Gtk.Stock.CANCEL);
         public RGBHistogramManipulator histogram_manipulator = new RGBHistogramManipulator();
 
+        public ProcessingUI processing_ui = new ProcessingUI();
+
         public AdjustToolWindow(Gtk.Window container) {
             base(container);
 
@@ -2226,9 +2228,18 @@ public class AdjustTool : EditingTool {
             Gtk.Alignment histogram_aligner = new Gtk.Alignment(0.5f, 0.0f, 0.0f, 0.0f);
             histogram_aligner.add(histogram_manipulator);
 
+            Gtk.Box levels_layouter = new Gtk.Box(Gtk.Orientation.VERTICAL, 8);
+
+            levels_layouter.add(histogram_aligner);
+            levels_layouter.add(slider_organizer);
+            
+            Gtk.Notebook notebook = new Gtk.Notebook();
+            // TODO: Only display pages when necessary.
+            notebook.append_page(levels_layouter, new Gtk.Label("Levels"));
+            notebook.append_page(processing_ui, new Gtk.Label("Tools"));
+
             Gtk.Box pane_layouter = new Gtk.Box(Gtk.Orientation.VERTICAL, 8);
-            pane_layouter.add(histogram_aligner);
-            pane_layouter.add(slider_organizer);
+            pane_layouter.add(notebook);
             pane_layouter.add(button_layouter);
             pane_layouter.set_child_packing(histogram_aligner, true, true, 0, Gtk.PackType.START);
 
@@ -2432,6 +2443,8 @@ public class AdjustTool : EditingTool {
         adjust_tool_window = new AdjustToolWindow(canvas.get_container());
 
         Photo photo = canvas.get_photo();
+        adjust_tool_window.processing_ui.photo = photo;
+        
         transformations = photo.get_color_adjustments();
         transformer = transformations.generate_transformer();
 
